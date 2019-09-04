@@ -11,7 +11,7 @@
         <input type="password" placeholder="请输入密码" v-model="pwd">
       </div>
       <div class="input">
-        <input type="password" placeholder="再次确认密码">
+        <input type="password" placeholder="再次确认密码" v-model="twicepwd">
       </div>
       <div class="enRegi">
         <el-button :plain="true" @click="enterReg">注册</el-button>
@@ -21,32 +21,39 @@
 
 <script>
 import httpAxios from "@/ulits/http"
+import {register} from "@/api/api.js"
 export default {
     data(){
         return {
             username:'',
             pwd:'',
+            twicepwd:'',
             realName:''
         }
     },
     methods:{
-        enterReg(){
-            httpAxios.post('/api/register',
-            {
+     async   enterReg(){
+          // 首先判断两次输入的密码是否一致
+          if(this.pwd!=this.twicepwd){
+             this.$message.error("密码不一致")
+          }else{  //一致的话走接口
+          // 用post传三个参数
+          const res= await register({
               userName:this.username,
               password:this.pwd,
               realName:this.realName
-            }).then(res=>{
-                console.log(res)
-               if(res.code===1){
-                  this.$message({
+           })
+             // 如果code==1说明注册成功
+                if(res.code===1){
+                   this.$message({
                     message:'注册成功',
                     type:'success'
-                    })
-               }else{
-                  this.$message("注册事变")
-               }
-            })
+                   })
+                  //  注册成功直接跳到登陆页去登陆
+                   this.$router.push({path:'/login'})
+                }
+          }
+            
         }
     }
 }

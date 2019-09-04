@@ -18,7 +18,9 @@
 </template>
 
 <script>
+// 用的httpAxios来做请求
 import httpAxios from "@/ulits/http"
+import {login} from "@/api/api.js"
 export default {
   data(){
     return {
@@ -27,28 +29,34 @@ export default {
     }
   },
   methods:{
-    goLogin(){
-     httpAxios.post("/api/login",
-     {
+    // 使用async函数 先执行gologin
+  async  goLogin(){
+      // 用post的接口给后端
+    const res= await login({  //在执行api里面的login
        userName:this.username,
        password:this.pwd
-      }).then(res=>{
+       })
+       // 如果code等于1 
         if(res.code===1){
+          // 那就把res.token存在本地存储里面
           window.localStorage.token=res.token;
             this.$message({
               message:"登陆成功",
               type:"success"
             })
-          let redirect=this.$route.query.redirect;
+            // 获取路由里面query的参数redirect
+            let redirect=this.$route.query.redirect;
+            // 如果redirect存在
             if(redirect){
+              // 那么就跳到当前redirect的路由
               this.$router.push({path:redirect})
             }else{
+              // 不存在就跳到首页
               this.$router.push('/home')
             }
-        }else if(res.code===-1){
-          this.$message.error("登陆失败")
-        }
-      })
+          }else if(res.code===-1){
+              this.$message.error("登陆失败")
+          }
     }
   }
 }
