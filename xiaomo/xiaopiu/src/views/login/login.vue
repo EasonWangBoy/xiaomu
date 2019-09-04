@@ -8,16 +8,17 @@
         <input type="password" placeholder="请输入密码" v-model="pwd">
       </div>
       <div class="link">
-        <router-link to="/register" tag="span">立即注册</router-link>
+        <router-link to="/register" tag="span" class="rgi">立即注册</router-link>
        <span>忘记密码</span>
       </div>
-      <div class="enter" @click="goLogin">
-        登陆
+        <div class="enter">
+        <el-button :plain="true" @click="goLogin">登陆</el-button>
       </div>
   </div>
 </template>
 
 <script>
+import httpAxios from "@/ulits/http"
 export default {
   data(){
     return {
@@ -27,18 +28,25 @@ export default {
   },
   methods:{
     goLogin(){
-      this.$http.post("/api/login",{userName:this.username,password:this.pwd}).then(res=>{
-        if(res.data.code===1){
-          window.localStorage.token=res.data.token;
-          alert("登陆成功")
+     httpAxios.post("/api/login",
+     {
+       userName:this.username,
+       password:this.pwd
+      }).then(res=>{
+        if(res.code===1){
+          window.localStorage.token=res.token;
+            this.$message({
+              message:"登陆成功",
+              type:"success"
+            })
           let redirect=this.$route.query.redirect;
-          if(redirect){
-            this.$router.push({path:redirect})
-          }else{
-            this.$router.push('/home')
-          }
-        }else{
-          alert("密码错误")
+            if(redirect){
+              this.$router.push({path:redirect})
+            }else{
+              this.$router.push('/home')
+            }
+        }else if(res.code===-1){
+          this.$message.error("登陆失败")
         }
       })
     }
@@ -89,8 +97,14 @@ export default {
   width: 60%;
   height: 40px;
   margin: 0 auto;
-  border: 1px solid skyblue;
   text-align: center;
   line-height: 40px;
+}
+.enter button{
+  width: 100%;
+  height: 100%;
+}
+.rgi{
+  color: rgba(255, 141, 26, 1);
 }
 </style>

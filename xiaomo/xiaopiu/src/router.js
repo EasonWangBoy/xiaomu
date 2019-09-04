@@ -16,7 +16,7 @@ const router= new Router({
     {
       path:"/login",
       meta:{
-        title:"沐恩之家欢迎你"
+        title:"欢迎回到沐恩之家~~"
       },
       component:() => import ('./views/login/login.vue')
     },

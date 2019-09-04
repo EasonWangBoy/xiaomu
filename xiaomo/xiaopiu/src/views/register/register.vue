@@ -13,16 +13,14 @@
       <div class="input">
         <input type="password" placeholder="再次确认密码">
       </div>
-      <div class="link">
-        <router-link to="/login" tag="span">登陆</router-link>
-      </div>
-      <div class="enRegi" @click="enterReg">
-        注册
+      <div class="enRegi">
+        <el-button :plain="true" @click="enterReg">注册</el-button>
       </div>
   </div>
 </template>
 
 <script>
+import httpAxios from "@/ulits/http"
 export default {
     data(){
         return {
@@ -33,12 +31,20 @@ export default {
     },
     methods:{
         enterReg(){
-            this.$http.post('/api/register',{userName:this.username,password:this.pwd,realName:this.realName}).then(res=>{
+            httpAxios.post('/api/register',
+            {
+              userName:this.username,
+              password:this.pwd,
+              realName:this.realName
+            }).then(res=>{
                 console.log(res)
-               if(res.data.code===1){
-                   alert("注册成功")
+               if(res.code===1){
+                  this.$message({
+                    message:'注册成功',
+                    type:'success'
+                    })
                }else{
-                   alert("用户名存在")
+                  this.$message("注册事变")
                }
             })
         }
@@ -89,8 +95,12 @@ export default {
   width: 60%;
   height: 40px;
   margin: 0 auto;
-  border: 1px solid skyblue;
   text-align: center;
   line-height: 40px;
+}
+.enRegi button{
+  width: 100%;
+  height: 100%;
+  // border
 }
 </style>
